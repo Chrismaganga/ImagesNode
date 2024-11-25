@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image API</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Image API</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="imageUpload">Choose Image:</label>
+      <input id="imageUpload" type="file" name="image" accept="image/*" required title="Choose an image to upload" />
+      <button type="submit">Upload</button>
+    </form>
+    <h2>Images</h2>
+    <div id="images"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const imagesDiv = document.getElementById("images");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      const response = await fetch("/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      alert(result.message);
+      fetchImages();
+    });
+
+    async function fetchImages() {
+      const response = await fetch("/images");
+      const { data } = await response.json();
+
+      imagesDiv.innerHTML = "";
+      data.forEach((img, index) => {
+        const imgElement = document.createElement("img");
+        imgElement.src = img.path;
+        imgElement.alt = img.filename;
+        imgElement.classList.add("thumbnail");
+
+        const imgIndex = document.createElement("p");
+        imgIndex.textContent = `Image ${index + 1}`;
+
+        const imgContainer = document.createElement("div");
+        imgContainer.appendChild(imgIndex);
+        imgContainer.appendChild(imgElement);
+
+        imagesDiv.appendChild(imgContainer);
+      });
+    }
+
+    // Fetch existing images on load
+    fetchImages();
+  </script>
+</body>
+</html>
