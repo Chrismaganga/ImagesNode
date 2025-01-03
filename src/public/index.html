@@ -12,6 +12,16 @@
     <form id="uploadForm" enctype="multipart/form-data">
       <label for="imageUpload">Choose Image:</label>
       <input id="imageUpload" type="file" name="image" accept="image/*" required title="Choose an image to upload" />
+    
+      <label for="imageName">Name:</label>
+      <input id="imageName" type="text" name="name" required />
+    
+      <label for="imageDescription">Description:</label>
+      <textarea id="imageDescription" name="description" required></textarea>
+    
+      <label for="imageUrl">URL:</label>
+      <input id="imageUrl" type="url" name="url" required />
+    
       <button type="submit">Upload</button>
     </form>
     <h2>Images</h2>
@@ -51,6 +61,7 @@
         imgIndex.textContent = `Image ${index + 1}`;
 
         const imgContainer = document.createElement("div");
+        imgContainer.classList.add("image-container");
         imgContainer.appendChild(imgIndex);
         imgContainer.appendChild(imgElement);
 
@@ -60,6 +71,57 @@
 
     // Fetch existing images on load
     fetchImages();
+
+    window.addEventListener("beforeunload", () => {
+      localStorage.clear();
+      if (localStorage.getItem("images")) {
+        localStorage.removeItem("images");
+      }
+    });
+
   </script>
 </body>
 </html>
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  form {
+    margin-bottom: 20px;
+  }
+
+  #images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .image-container {
+    flex: 1 1 calc(25% - 10px);
+    box-sizing: border-box;
+    margin: 5px;
+    text-align: center;
+  }
+
+  .thumbnail {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .image-container {
+      flex: 1 1 calc(50% - 10px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .image-container {
+      flex: 1 1 100%;
+    }
+  }
+</style>
